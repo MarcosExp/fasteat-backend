@@ -36,3 +36,6 @@ build/
 .env
 *.bat
 
+# Archivos de configuración local
+src/main/resources/application-dev.properties
+
