@@ -11,7 +11,7 @@ import java.util.Map;
 /*
  * Clase que permite convertir un mapa a un JSON y viceversa
  */
-@Converter
+@Converter(autoApply = false)
 public class MenuConverter implements AttributeConverter<Map<String, Double>, String> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
