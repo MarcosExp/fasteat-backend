@@ -1,6 +1,7 @@
 package com.fasteat.fasteat_api.dto;
 
 import java.util.Map;
+import java.util.HashMap;
 
 public class RestauranteResponseDTO {
     private int idRestaurante;
@@ -8,13 +9,15 @@ public class RestauranteResponseDTO {
     private String direccion;
     private Map<String, Double> menu;
 
-    public RestauranteResponseDTO() {}
+    public RestauranteResponseDTO() {
+        this.menu = new HashMap<>();
+    }
 
     public RestauranteResponseDTO(int idRestaurante, String nombre, String direccion, Map<String, Double> menu) {
         this.idRestaurante = idRestaurante;
-        this.nombre = nombre;
-        this.direccion = direccion;
-        this.menu = menu;
+        this.nombre = nombre != null ? nombre : "";
+        this.direccion = direccion != null ? direccion : "";
+        this.menu = menu != null ? menu : new HashMap<>();
     }
 
     // Getters y setters
@@ -27,26 +30,26 @@ public class RestauranteResponseDTO {
     }
 
     public String getNombre() {
-        return nombre;
+        return nombre != null ? nombre : "";
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = nombre != null ? nombre : "";
     }
 
     public String getDireccion() {
-        return direccion;
+        return direccion != null ? direccion : "";
     }
 
     public void setDireccion(String direccion) {
-        this.direccion = direccion;
+        this.direccion = direccion != null ? direccion : "";
     }
 
     public Map<String, Double> getMenu() {
-        return menu;
+        return menu != null ? menu : new HashMap<>();
     }
 
     public void setMenu(Map<String, Double> menu) {
-        this.menu = menu;
+        this.menu = menu != null ? menu : new HashMap<>();
     }
 } 

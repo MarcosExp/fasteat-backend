@@ -30,18 +30,23 @@ public class RestauranteController {
 
     private RestauranteResponseDTO convertToDTO(Restaurante restaurante) {
         try {
-            logger.debug("Convirtiendo restaurante a DTO: {}", restaurante.getIdRestaurante());
-            RestauranteResponseDTO dto = new RestauranteResponseDTO(
-                restaurante.getIdRestaurante(),
-                restaurante.getNombre(),
-                restaurante.getDireccion(),
-                restaurante.getMenu()
-            );
-            logger.debug("DTO creado: {}", objectMapper.writeValueAsString(dto));
+            logger.debug("Iniciando conversión de restaurante a DTO");
+            logger.debug("ID del restaurante: {}", restaurante.getIdRestaurante());
+            logger.debug("Nombre del restaurante: {}", restaurante.getNombre());
+            logger.debug("Dirección del restaurante: {}", restaurante.getDireccion());
+            logger.debug("Menú del restaurante: {}", restaurante.getMenu());
+
+            RestauranteResponseDTO dto = new RestauranteResponseDTO();
+            dto.setIdRestaurante(restaurante.getIdRestaurante());
+            dto.setNombre(restaurante.getNombre());
+            dto.setDireccion(restaurante.getDireccion());
+            dto.setMenu(restaurante.getMenu());
+
+            logger.debug("DTO creado exitosamente");
             return dto;
         } catch (Exception e) {
-            logger.error("Error al convertir restaurante a DTO: ", e);
-            throw new RuntimeException("Error al convertir restaurante a DTO", e);
+            logger.error("Error detallado al convertir restaurante a DTO: ", e);
+            throw new RuntimeException("Error al convertir restaurante a DTO: " + e.getMessage(), e);
         }
     }
 
@@ -52,14 +57,16 @@ public class RestauranteController {
             List<Restaurante> restaurantes = restauranteRepository.findAll();
             logger.debug("Restaurantes encontrados en BD: {}", restaurantes.size());
             
+            if (restaurantes.isEmpty()) {
+                logger.debug("No se encontraron restaurantes");
+                return ResponseEntity.ok(List.of());
+            }
+
             List<RestauranteResponseDTO> restaurantesDTO = restaurantes.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
             
             logger.debug("Restaurantes convertidos a DTO: {}", restaurantesDTO.size());
-            String jsonResponse = objectMapper.writeValueAsString(restaurantesDTO);
-            logger.debug("Respuesta JSON generada: {}", jsonResponse);
-            
             return ResponseEntity.ok(restaurantesDTO);
         } catch (Exception e) {
             logger.error("Error en getAllRestaurantes: ", e);
