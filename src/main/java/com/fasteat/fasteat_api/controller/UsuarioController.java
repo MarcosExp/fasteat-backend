@@ -33,8 +33,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public Usuario getUsuarioById(@PathVariable int id) {
-        return usuarioRepository.findById(id).orElse(null);
+    public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id) {
+        return usuarioRepository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
@@ -54,31 +56,36 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public Usuario updateUsuario(@PathVariable int id, @RequestBody Usuario usuarioDetails) {
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
-        if (usuario != null) {
-            usuario.setNombre(usuarioDetails.getNombre());
-            usuario.setEmail(usuarioDetails.getEmail());
-            
-            // Si se proporciona una nueva contraseña, la hasheamos
-            if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
-                String encodedPassword = usuarioService.encodePassword(usuarioDetails.getPassword());
-                usuario.setPassword(encodedPassword);
-            }
-            
-            // Actualizar rol si se proporciona
-            if (usuarioDetails.getRol() != null) {
-                usuario.setRol(usuarioDetails.getRol());
-            }
-            
-            return usuarioRepository.save(usuario);
-        }
-        return null;
+    public ResponseEntity<Usuario> updateUsuario(@PathVariable int id, @RequestBody Usuario usuarioDetails) {
+        return usuarioRepository.findById(id)
+            .map(usuario -> {
+                usuario.setNombre(usuarioDetails.getNombre());
+                usuario.setEmail(usuarioDetails.getEmail());
+                
+                // Si se proporciona una nueva contraseña, la hasheamos
+                if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
+                    String encodedPassword = usuarioService.encodePassword(usuarioDetails.getPassword());
+                    usuario.setPassword(encodedPassword);
+                }
+                
+                // Actualizar rol si se proporciona
+                if (usuarioDetails.getRol() != null) {
+                    usuario.setRol(usuarioDetails.getRol());
+                }
+                
+                return ResponseEntity.ok(usuarioRepository.save(usuario));
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUsuario(@PathVariable int id) {
-        usuarioRepository.deleteById(id);
+    public ResponseEntity<Void> deleteUsuario(@PathVariable int id) {
+        return usuarioRepository.findById(id)
+            .map(usuario -> {
+                usuarioRepository.delete(usuario);
+                return ResponseEntity.ok().<Void>build();
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/login")

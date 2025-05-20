@@ -3,6 +3,7 @@ package com.fasteat.fasteat_api.controller;
 import com.fasteat.fasteat_api.model.Pedido;
 import com.fasteat.fasteat_api.repositories.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    public Pedido getPedidoById(@PathVariable int id) {
-        return pedidoRepository.findById(id).orElse(null);
+    public ResponseEntity<Pedido> getPedidoById(@PathVariable int id) {
+        return pedidoRepository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -35,21 +38,26 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public Pedido updatePedido(@PathVariable int id, @RequestBody Pedido pedidoDetails) {
-        Pedido pedido = pedidoRepository.findById(id).orElse(null);
-        if (pedido != null) {
-            pedido.setUsuario(pedidoDetails.getUsuario());
-            pedido.setRestaurante(pedidoDetails.getRestaurante());
-            pedido.setDetalles(pedidoDetails.getDetalles());
-            pedido.setEstado(pedidoDetails.isEstado());
-            pedido.setTotal(pedidoDetails.getTotal());
-            return pedidoRepository.save(pedido);
-        }
-        return null;
+    public ResponseEntity<Pedido> updatePedido(@PathVariable int id, @RequestBody Pedido pedidoDetails) {
+        return pedidoRepository.findById(id)
+            .map(pedido -> {
+                pedido.setUsuario(pedidoDetails.getUsuario());
+                pedido.setRestaurante(pedidoDetails.getRestaurante());
+                pedido.setDetalles(pedidoDetails.getDetalles());
+                pedido.setEstado(pedidoDetails.isEstado());
+                pedido.setTotal(pedidoDetails.getTotal());
+                return ResponseEntity.ok(pedidoRepository.save(pedido));
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void deletePedido(@PathVariable int id) {
-        pedidoRepository.deleteById(id);
+    public ResponseEntity<Void> deletePedido(@PathVariable int id) {
+        return pedidoRepository.findById(id)
+            .map(pedido -> {
+                pedidoRepository.delete(pedido);
+                return ResponseEntity.ok().<Void>build();
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 }

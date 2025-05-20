@@ -1,6 +1,7 @@
 package com.fasteat.fasteat_api.model;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 /*
  * Clase que define la entidad Pedido
  * Define los atributos de un pedido
@@ -82,5 +83,18 @@ public class Pedido {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pedido pedido = (Pedido) o;
+        return idPedido == pedido.idPedido;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idPedido);
     }
 }

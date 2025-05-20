@@ -3,6 +3,7 @@ package com.fasteat.fasteat_api.controller;
 import com.fasteat.fasteat_api.model.Restaurante;
 import com.fasteat.fasteat_api.repositories.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,10 @@ public class RestauranteController {
     }
 
     @GetMapping("/{id}")
-    public Restaurante getRestauranteById(@PathVariable int id) {
-        return restauranteRepository.findById(id).orElse(null);
+    public ResponseEntity<Restaurante> getRestauranteById(@PathVariable int id) {
+        return restauranteRepository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -35,19 +38,24 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
-    public Restaurante updateRestaurante(@PathVariable int id, @RequestBody Restaurante restauranteDetails) {
-        Restaurante restaurante = restauranteRepository.findById(id).orElse(null);
-        if (restaurante != null) {
-            restaurante.setNombre(restauranteDetails.getNombre());
-            restaurante.setDireccion(restauranteDetails.getDireccion());
-            restaurante.setMenu(restauranteDetails.getMenu());
-            return restauranteRepository.save(restaurante);
-        }
-        return null;
+    public ResponseEntity<Restaurante> updateRestaurante(@PathVariable int id, @RequestBody Restaurante restauranteDetails) {
+        return restauranteRepository.findById(id)
+            .map(restaurante -> {
+                restaurante.setNombre(restauranteDetails.getNombre());
+                restaurante.setDireccion(restauranteDetails.getDireccion());
+                restaurante.setMenu(restauranteDetails.getMenu());
+                return ResponseEntity.ok(restauranteRepository.save(restaurante));
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRestaurante(@PathVariable int id) {
-        restauranteRepository.deleteById(id);
+    public ResponseEntity<Void> deleteRestaurante(@PathVariable int id) {
+        return restauranteRepository.findById(id)
+            .map(restaurante -> {
+                restauranteRepository.delete(restaurante);
+                return ResponseEntity.ok().<Void>build();
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 }

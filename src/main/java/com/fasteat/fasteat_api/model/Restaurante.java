@@ -3,6 +3,7 @@ package com.fasteat.fasteat_api.model;
 import jakarta.persistence.*;
 import com.fasteat.fasteat_api.converter.MenuConverter;
 import java.util.Map;
+import java.util.Objects;
 /*
  * Clase que define la entidad Restaurante
  * Define los atributos de un restaurante
@@ -18,7 +19,7 @@ public class Restaurante {
     private String direccion;
 
     @Convert(converter = MenuConverter.class)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "varchar(1000)")
     private Map<String, Double> menu;
 
     // Constructor, getters y setters
@@ -61,5 +62,18 @@ public class Restaurante {
 
     public void setMenu(Map<String, Double> menu) {
         this.menu = menu;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Restaurante that = (Restaurante) o;
+        return idRestaurante == that.idRestaurante;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idRestaurante);
     }
 }
