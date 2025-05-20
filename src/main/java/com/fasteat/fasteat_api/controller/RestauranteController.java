@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,30 +23,46 @@ import java.util.stream.Collectors;
 public class RestauranteController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestauranteController.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private RestauranteRepository restauranteRepository;
 
     private RestauranteResponseDTO convertToDTO(Restaurante restaurante) {
-        return new RestauranteResponseDTO(
-            restaurante.getIdRestaurante(),
-            restaurante.getNombre(),
-            restaurante.getDireccion(),
-            restaurante.getMenu()
-        );
+        try {
+            logger.debug("Convirtiendo restaurante a DTO: {}", restaurante.getIdRestaurante());
+            RestauranteResponseDTO dto = new RestauranteResponseDTO(
+                restaurante.getIdRestaurante(),
+                restaurante.getNombre(),
+                restaurante.getDireccion(),
+                restaurante.getMenu()
+            );
+            logger.debug("DTO creado: {}", objectMapper.writeValueAsString(dto));
+            return dto;
+        } catch (Exception e) {
+            logger.error("Error al convertir restaurante a DTO: ", e);
+            throw new RuntimeException("Error al convertir restaurante a DTO", e);
+        }
     }
 
     @GetMapping
     public ResponseEntity<?> getAllRestaurantes() {
+        logger.debug("Iniciando getAllRestaurantes");
         try {
             List<Restaurante> restaurantes = restauranteRepository.findAll();
+            logger.debug("Restaurantes encontrados en BD: {}", restaurantes.size());
+            
             List<RestauranteResponseDTO> restaurantesDTO = restaurantes.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
-            logger.info("Encontrados {} restaurantes", restaurantes.size());
+            
+            logger.debug("Restaurantes convertidos a DTO: {}", restaurantesDTO.size());
+            String jsonResponse = objectMapper.writeValueAsString(restaurantesDTO);
+            logger.debug("Respuesta JSON generada: {}", jsonResponse);
+            
             return ResponseEntity.ok(restaurantesDTO);
         } catch (Exception e) {
-            logger.error("Error al obtener restaurantes: ", e);
+            logger.error("Error en getAllRestaurantes: ", e);
             return ResponseEntity.internalServerError()
                 .body("Error al obtener restaurantes: " + e.getMessage());
         }
@@ -53,12 +70,16 @@ public class RestauranteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRestauranteById(@PathVariable int id) {
+        logger.debug("Iniciando getRestauranteById para id: {}", id);
         try {
             return restauranteRepository.findById(id)
-                .map(restaurante -> ResponseEntity.ok(convertToDTO(restaurante)))
+                .map(restaurante -> {
+                    logger.debug("Restaurante encontrado: {}", restaurante.getIdRestaurante());
+                    return ResponseEntity.ok(convertToDTO(restaurante));
+                })
                 .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            logger.error("Error al obtener restaurante con id {}: ", id, e);
+            logger.error("Error en getRestauranteById: ", e);
             return ResponseEntity.internalServerError()
                 .body("Error al obtener restaurante: " + e.getMessage());
         }
@@ -66,12 +87,14 @@ public class RestauranteController {
 
     @PostMapping
     public ResponseEntity<?> createRestaurante(@RequestBody Restaurante restaurante) {
+        logger.debug("Iniciando createRestaurante");
         try {
+            logger.debug("Datos recibidos: {}", objectMapper.writeValueAsString(restaurante));
             Restaurante savedRestaurante = restauranteRepository.save(restaurante);
-            logger.info("Restaurante creado con id: {}", savedRestaurante.getIdRestaurante());
+            logger.debug("Restaurante guardado con id: {}", savedRestaurante.getIdRestaurante());
             return ResponseEntity.ok(convertToDTO(savedRestaurante));
         } catch (Exception e) {
-            logger.error("Error al crear restaurante: ", e);
+            logger.error("Error en createRestaurante: ", e);
             return ResponseEntity.internalServerError()
                 .body("Error al crear restaurante: " + e.getMessage());
         }
@@ -79,19 +102,21 @@ public class RestauranteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRestaurante(@PathVariable int id, @RequestBody Restaurante restauranteDetails) {
+        logger.debug("Iniciando updateRestaurante para id: {}", id);
         try {
             return restauranteRepository.findById(id)
                 .map(restaurante -> {
+                    logger.debug("Restaurante encontrado para actualizar: {}", id);
                     restaurante.setNombre(restauranteDetails.getNombre());
                     restaurante.setDireccion(restauranteDetails.getDireccion());
                     restaurante.setMenu(restauranteDetails.getMenu());
                     Restaurante updatedRestaurante = restauranteRepository.save(restaurante);
-                    logger.info("Restaurante actualizado con id: {}", id);
+                    logger.debug("Restaurante actualizado: {}", id);
                     return ResponseEntity.ok(convertToDTO(updatedRestaurante));
                 })
                 .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            logger.error("Error al actualizar restaurante con id {}: ", id, e);
+            logger.error("Error en updateRestaurante: ", e);
             return ResponseEntity.internalServerError()
                 .body("Error al actualizar restaurante: " + e.getMessage());
         }
@@ -99,16 +124,17 @@ public class RestauranteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRestaurante(@PathVariable int id) {
+        logger.debug("Iniciando deleteRestaurante para id: {}", id);
         try {
             return restauranteRepository.findById(id)
                 .map(restaurante -> {
                     restauranteRepository.delete(restaurante);
-                    logger.info("Restaurante eliminado con id: {}", id);
+                    logger.debug("Restaurante eliminado: {}", id);
                     return ResponseEntity.ok().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
-            logger.error("Error al eliminar restaurante con id {}: ", id, e);
+            logger.error("Error en deleteRestaurante: ", e);
             return ResponseEntity.internalServerError()
                 .body("Error al eliminar restaurante: " + e.getMessage());
         }
