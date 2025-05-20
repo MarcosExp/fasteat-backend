@@ -10,7 +10,7 @@ import java.util.HashMap;
  * Define los atributos de un restaurante
  */
 @Entity
-@Table(name = "restaurantes")
+@Table(name = "restaurante")
 public class Restaurante {
 
     @Id
