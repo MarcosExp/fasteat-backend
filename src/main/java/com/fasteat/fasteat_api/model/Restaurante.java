@@ -4,31 +4,38 @@ import jakarta.persistence.*;
 import com.fasteat.fasteat_api.converter.MenuConverter;
 import java.util.Map;
 import java.util.Objects;
+import java.util.HashMap;
 /*
  * Clase que define la entidad Restaurante
  * Define los atributos de un restaurante
  */
 @Entity
+@Table(name = "restaurantes")
 public class Restaurante {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idRestaurante;
 
+    @Column(nullable = false)
     private String nombre;
+
+    @Column(nullable = false)
     private String direccion;
 
     @Convert(converter = MenuConverter.class)
-    @Column(columnDefinition = "varchar(1000)")
-    private Map<String, Double> menu;
+    @Column(columnDefinition = "TEXT")
+    private Map<String, Double> menu = new HashMap<>();
 
     // Constructor, getters y setters
-    public Restaurante() {}
+    public Restaurante() {
+        this.menu = new HashMap<>();
+    }
 
     public Restaurante(String nombre, String direccion, Map<String, Double> menu) {
         this.nombre = nombre;
         this.direccion = direccion;
-        this.menu = menu;
+        this.menu = menu != null ? menu : new HashMap<>();
     }
 
     // Getters y setters
@@ -57,11 +64,11 @@ public class Restaurante {
     }
 
     public Map<String, Double> getMenu() {
-        return menu;
+        return menu != null ? menu : new HashMap<>();
     }
 
     public void setMenu(Map<String, Double> menu) {
-        this.menu = menu;
+        this.menu = menu != null ? menu : new HashMap<>();
     }
 
     @Override
