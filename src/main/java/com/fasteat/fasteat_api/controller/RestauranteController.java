@@ -34,13 +34,15 @@ public class RestauranteController {
             logger.debug("ID del restaurante: {}", restaurante.getIdRestaurante());
             logger.debug("Nombre del restaurante: {}", restaurante.getNombre());
             logger.debug("Dirección del restaurante: {}", restaurante.getDireccion());
-            logger.debug("Menú del restaurante: {}", restaurante.getMenu());
 
             RestauranteResponseDTO dto = new RestauranteResponseDTO();
             dto.setIdRestaurante(restaurante.getIdRestaurante());
             dto.setNombre(restaurante.getNombre());
             dto.setDireccion(restaurante.getDireccion());
-            dto.setMenu(restaurante.getMenu());
+            
+            // Convertir el menú a String
+            String menuJson = objectMapper.writeValueAsString(restaurante.getMenu());
+            dto.setMenu(menuJson);
 
             logger.debug("DTO creado exitosamente");
             return dto;
@@ -146,4 +148,6 @@ public class RestauranteController {
                 .body("Error al eliminar restaurante: " + e.getMessage());
         }
     }
+
+    
 }
