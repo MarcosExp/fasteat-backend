@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +27,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurantes")
+@Tag(name = "Restaurante", description = "API para la gestión de restaurantes")
 public class RestauranteController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestauranteController.class);
@@ -52,6 +60,12 @@ public class RestauranteController {
         }
     }
 
+    @Operation(summary = "Obtener todos los restaurantes", description = "Retorna una lista de todos los restaurantes registrados en el sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de restaurantes encontrada exitosamente",
+            content = @Content(schema = @Schema(implementation = RestauranteResponseDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping
     public ResponseEntity<?> getAllRestaurantes() {
         logger.debug("Iniciando getAllRestaurantes");
@@ -77,8 +91,16 @@ public class RestauranteController {
         }
     }
 
+    @Operation(summary = "Obtener restaurante por ID", description = "Retorna un restaurante específico basado en su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Restaurante encontrado exitosamente",
+            content = @Content(schema = @Schema(implementation = RestauranteResponseDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Restaurante no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRestauranteById(@PathVariable int id) {
+    public ResponseEntity<?> getRestauranteById(
+            @Parameter(description = "ID del restaurante a buscar") @PathVariable int id) {
         logger.debug("Iniciando getRestauranteById para id: {}", id);
         try {
             return restauranteRepository.findById(id)
@@ -94,8 +116,15 @@ public class RestauranteController {
         }
     }
 
+    @Operation(summary = "Crear nuevo restaurante", description = "Crea un nuevo restaurante en el sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Restaurante creado exitosamente",
+            content = @Content(schema = @Schema(implementation = RestauranteResponseDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PostMapping
-    public ResponseEntity<?> createRestaurante(@RequestBody Restaurante restaurante) {
+    public ResponseEntity<?> createRestaurante(
+            @Parameter(description = "Datos del restaurante a crear") @RequestBody Restaurante restaurante) {
         logger.debug("Iniciando createRestaurante");
         try {
             logger.debug("Datos recibidos: {}", objectMapper.writeValueAsString(restaurante));
@@ -109,8 +138,17 @@ public class RestauranteController {
         }
     }
 
+    @Operation(summary = "Actualizar restaurante", description = "Actualiza los datos de un restaurante existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Restaurante actualizado exitosamente",
+            content = @Content(schema = @Schema(implementation = RestauranteResponseDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Restaurante no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateRestaurante(@PathVariable int id, @RequestBody Restaurante restauranteDetails) {
+    public ResponseEntity<?> updateRestaurante(
+            @Parameter(description = "ID del restaurante a actualizar") @PathVariable int id,
+            @Parameter(description = "Nuevos datos del restaurante") @RequestBody Restaurante restauranteDetails) {
         logger.debug("Iniciando updateRestaurante para id: {}", id);
         try {
             return restauranteRepository.findById(id)
@@ -131,8 +169,15 @@ public class RestauranteController {
         }
     }
 
+    @Operation(summary = "Eliminar restaurante", description = "Elimina un restaurante del sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Restaurante eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Restaurante no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRestaurante(@PathVariable int id) {
+    public ResponseEntity<?> deleteRestaurante(
+            @Parameter(description = "ID del restaurante a eliminar") @PathVariable int id) {
         logger.debug("Iniciando deleteRestaurante para id: {}", id);
         try {
             return restauranteRepository.findById(id)
