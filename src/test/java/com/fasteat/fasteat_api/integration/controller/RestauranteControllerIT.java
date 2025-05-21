@@ -46,9 +46,9 @@ public class RestauranteControllerIT {
     @Test
     void testCrearYObtenerRestaurante() {
         // Crear restaurante
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
-        menu.put("Pizza", 12.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
+        menu.put(2, 12.99);
         
         Restaurante restaurante = new Restaurante();
         restaurante.setNombre("La Buena Mesa");
@@ -89,8 +89,8 @@ public class RestauranteControllerIT {
     @Test
     void testActualizarRestaurante() {
         // Crear restaurante inicial
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         
         Restaurante restaurante = new Restaurante();
         restaurante.setNombre("El Rincón");
@@ -101,7 +101,7 @@ public class RestauranteControllerIT {
         // Actualizar restaurante
         restaurante.setNombre("El Rincón Gourmet");
         restaurante.setDireccion("Avenida Central 789");
-        menu.put("Pizza", 12.99);
+        menu.put(2, 12.99);
         restaurante.setMenu(menu);
 
         HttpHeaders headers = new HttpHeaders();
@@ -126,8 +126,8 @@ public class RestauranteControllerIT {
     @Test
     void testEliminarRestaurante() {
         // Crear restaurante
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         
         Restaurante restaurante = new Restaurante();
         restaurante.setNombre("El Rincón");
@@ -152,16 +152,16 @@ public class RestauranteControllerIT {
     @Test
     void testObtenerTodosLosRestaurantes() {
         // Crear dos restaurantes
-        Map<String, Double> menu1 = new HashMap<>();
-        menu1.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu1 = new HashMap<>();
+        menu1.put(1, 8.99);
         Restaurante restaurante1 = new Restaurante();
         restaurante1.setNombre("El Rincón");
         restaurante1.setDireccion("Avenida Central 456");
         restaurante1.setMenu(menu1);
         restauranteRepository.save(restaurante1);
 
-        Map<String, Double> menu2 = new HashMap<>();
-        menu2.put("Pizza", 12.99);
+        Map<Integer, Double> menu2 = new HashMap<>();
+        menu2.put(2, 12.99);
         Restaurante restaurante2 = new Restaurante();
         restaurante2.setNombre("La Buena Mesa");
         restaurante2.setDireccion("Calle Principal 123");

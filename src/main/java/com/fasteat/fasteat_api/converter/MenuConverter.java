@@ -12,15 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 /*
  * Clase que permite convertir un mapa a un JSON y viceversa
+ * El mapa usa el ID del producto como clave y el precio como valor
  */
 @Converter
-public class MenuConverter implements AttributeConverter<Map<String, Double>, String> {
+public class MenuConverter implements AttributeConverter<Map<Integer, Double>, String> {
 
     private static final Logger logger = LoggerFactory.getLogger(MenuConverter.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(Map<String, Double> menu) {
+    public String convertToDatabaseColumn(Map<Integer, Double> menu) {
         if (menu == null) {
             return "{}";
         }
@@ -33,7 +34,7 @@ public class MenuConverter implements AttributeConverter<Map<String, Double>, St
     }
 
     @Override
-    public Map<String, Double> convertToEntityAttribute(String menuJson) {
+    public Map<Integer, Double> convertToEntityAttribute(String menuJson) {
         if (menuJson == null || menuJson.isEmpty()) {
             return new HashMap<>();
         }

@@ -56,8 +56,8 @@ public class PedidoControllerIT {
         Usuario usuario = new Usuario("Test User", "test@example.com", "password123");
         usuario = usuarioRepository.save(usuario);
 
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         Restaurante restaurante = new Restaurante("Test Restaurant", "Test Address", menu);
         restaurante = restauranteRepository.save(restaurante);
 
@@ -106,8 +106,8 @@ public class PedidoControllerIT {
         Usuario usuario = new Usuario("Test User", "test@example.com", "password123");
         usuario = usuarioRepository.save(usuario);
 
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         Restaurante restaurante = new Restaurante("Test Restaurant", "Test Address", menu);
         restaurante = restauranteRepository.save(restaurante);
 
@@ -148,8 +148,8 @@ public class PedidoControllerIT {
         Usuario usuario = new Usuario("Test User", "test@example.com", "password123");
         usuario = usuarioRepository.save(usuario);
 
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         Restaurante restaurante = new Restaurante("Test Restaurant", "Test Address", menu);
         restaurante = restauranteRepository.save(restaurante);
 
@@ -182,8 +182,8 @@ public class PedidoControllerIT {
         Usuario usuario = new Usuario("Test User", "test@example.com", "password123");
         usuario = usuarioRepository.save(usuario);
 
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         Restaurante restaurante = new Restaurante("Test Restaurant", "Test Address", menu);
         restaurante = restauranteRepository.save(restaurante);
 

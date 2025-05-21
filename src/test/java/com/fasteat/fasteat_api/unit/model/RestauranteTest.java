@@ -10,14 +10,10 @@ public class RestauranteTest {
     
     @Test
     public void testRestauranteConstructorCompleto() {
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
-        menu.put("Pizza", 12.99);
-        
-        Restaurante restaurante = new Restaurante("La Buena Mesa", "Calle Principal 123", menu);
+        Restaurante restaurante = new Restaurante("La Buena Mesa", "Calle Principal 123");
         assertEquals("La Buena Mesa", restaurante.getNombre());
         assertEquals("Calle Principal 123", restaurante.getDireccion());
-        assertEquals(menu, restaurante.getMenu());
+        assertTrue(restaurante.getMenu().isEmpty());
     }
 
     @Test
@@ -27,8 +23,8 @@ public class RestauranteTest {
         restaurante.setNombre("El Rincón");
         restaurante.setDireccion("Avenida Central 456");
         
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Pasta", 9.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 9.99);
         restaurante.setMenu(menu);
 
         assertEquals(1, restaurante.getIdRestaurante());

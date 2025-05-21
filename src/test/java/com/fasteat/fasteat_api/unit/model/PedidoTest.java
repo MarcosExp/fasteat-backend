@@ -13,8 +13,8 @@ public class PedidoTest {
     @Test
     public void testPedidoConstructorCompleto() {
         Usuario usuario = new Usuario("John Doe", "john@example.com", "password");
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Hamburguesa", 8.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 8.99);
         Restaurante restaurante = new Restaurante("La Buena Mesa", "Calle Principal 123", menu);
         
         Pedido pedido = new Pedido(usuario, restaurante, "2 Hamburguesas", true, 17.98);
@@ -34,8 +34,8 @@ public class PedidoTest {
         Usuario usuario = new Usuario("Jane Doe", "jane@example.com", "password");
         pedido.setUsuario(usuario);
         
-        Map<String, Double> menu = new HashMap<>();
-        menu.put("Pizza", 12.99);
+        Map<Integer, Double> menu = new HashMap<>();
+        menu.put(1, 12.99);
         Restaurante restaurante = new Restaurante("El Rincón", "Avenida Central 456", menu);
         pedido.setRestaurante(restaurante);
         

@@ -5,6 +5,8 @@ import com.fasteat.fasteat_api.converter.MenuConverter;
 import java.util.Map;
 import java.util.Objects;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 /*
  * Clase que define la entidad Restaurante
  * Define los atributos de un restaurante
@@ -25,17 +27,29 @@ public class Restaurante {
 
     @Convert(converter = MenuConverter.class)
     @Column(columnDefinition = "TEXT")
-    private Map<String, Double> menu = new HashMap<>();
+    private Map<Integer, Double> menu = new HashMap<>();
+
+    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Producto> productos = new ArrayList<>();
 
     // Constructor, getters y setters
     public Restaurante() {
         this.menu = new HashMap<>();
+        this.productos = new ArrayList<>();
     }
 
-    public Restaurante(String nombre, String direccion, Map<String, Double> menu) {
+    public Restaurante(String nombre, String direccion) {
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.menu = new HashMap<>();
+        this.productos = new ArrayList<>();
+    }
+
+    public Restaurante(String nombre, String direccion, Map<Integer, Double> menu) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.menu = menu != null ? menu : new HashMap<>();
+        this.productos = new ArrayList<>();
     }
 
     // Getters y setters
@@ -63,12 +77,34 @@ public class Restaurante {
         this.direccion = direccion;
     }
 
-    public Map<String, Double> getMenu() {
+    public Map<Integer, Double> getMenu() {
         return menu != null ? menu : new HashMap<>();
     }
 
-    public void setMenu(Map<String, Double> menu) {
+    public void setMenu(Map<Integer, Double> menu) {
         this.menu = menu != null ? menu : new HashMap<>();
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
+    }
+
+    public void addProducto(Producto producto) {
+        productos.add(producto);
+        producto.setRestaurante(this);
+        // Actualizar el menú JSON con el nuevo producto usando su ID
+        menu.put(producto.getIdProducto(), producto.getPrecio());
+    }
+
+    public void removeProducto(Producto producto) {
+        productos.remove(producto);
+        producto.setRestaurante(null);
+        // Eliminar el producto del menú JSON usando su ID
+        menu.remove(producto.getIdProducto());
     }
 
     @Override
